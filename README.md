@@ -11,14 +11,14 @@ The program works by first taking in 3 games from the user (follows the stream s
 8. Produces a final image
 
 ## TO-DO (Project is still WIP)
-[x] Make a Twitch API access token retriever
-[x] Make an IGDB query function
-[x] Make a box art retriever
-[ ] Make a box art downloader
-[ ] Make a copier for the schedule template
-[ ] Insert the box art into the template copy
-[ ] Label the template copy
-[ ] Produce final image
+- [x] Make a Twitch API access token retriever
+- [x] Make an IGDB query function
+- [x] Make a box art retriever
+- [ ] Make a box art downloader
+- [ ] Make a copier for the schedule template
+- [ ] Insert the box art into the template copy
+- [ ] Label the template copy
+- [ ] Produce final image
 
 ## How to Use
 To run, create a virtual environment and install the following:

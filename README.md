@@ -19,8 +19,10 @@ The program works by first taking in 3 games from the user (follows the stream s
 - [ ] Insert the box art into the template copy
 - [ ] Label the template copy
 - [ ] Produce final image
+### Bonus Things I Might Do (from highest to lowest priority)
 - [ ] Add a default image for when the box art retriever finds nothing
 - [ ] Add an alternate mode that fetches game screenshots instead of box art
+- [ ] Decouple program from IGDB wrapper library (ie. write my own request headers)
 - [ ] Create a UI (Qt?) to allow the user to enter in the games and select any settings????
 
 ## How to Use

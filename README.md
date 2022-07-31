@@ -14,7 +14,7 @@ The program works by first taking in 3 games from the user (follows the stream s
 - [x] Make a Twitch API access token retriever
 - [x] Make an IGDB query function
 - [x] Make a box art URL retriever using IGDB API
-- [ ] Make a box art downloader
+- [x] Make a box art downloader
 - [ ] Make a copier for the schedule template
 - [ ] Insert the box art into the template copy
 - [ ] Label the template copy

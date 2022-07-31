@@ -3,7 +3,7 @@
 Contains the ImageProcessor class, which takes in all the source material and
 '''
 
-from config.defaults import BOX_ART_RESIZE, MONDAY_POSITION, WEDNESDAY_POSITION, FRIDAY_POSITION
+from config.defaults import BOX_ART_RESIZE, MONDAY_POS, WEDNESDAY_POS, FRIDAY_POS
 
 from PIL import Image
 

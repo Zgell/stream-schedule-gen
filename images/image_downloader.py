@@ -12,7 +12,7 @@ import requests
 
 class ImageDownloader(BoxArtScraper):
     def __init__(self, auth = AUTH_PATH):
-        super().__init__(auth = AUTH_PATH)
+        super().__init__(auth)
 
     def download_box_art(self, fname: str, url: str):
         # Found here: https://stackoverflow.com/questions/30229231/python-save-image-from-url

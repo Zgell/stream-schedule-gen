@@ -3,9 +3,10 @@ A test case for the Twitch API access and box art scraping.
 '''
 
 from api.igdb import BoxArtScraper
+from images.image_downloader import ImageDownloader
 
 if __name__ == '__main__':
-    scraper = BoxArtScraper(auth='config/auth.json')
+    scraper = ImageDownloader(auth='config/auth.json')
     print('-= Twitch API Information =-')
     print('Client ID:     ', scraper.twitch.client_id)
     print('Client Secret: ', scraper.twitch.client_secret)
@@ -17,6 +18,9 @@ if __name__ == '__main__':
     print('Retrieving box art for given title...')
     url = scraper.scrape_box_art(title)
     print('Box art URL: ', url)
+    FPATH = 'images/temp/test.png'
+    scraper.download_box_art(FPATH, url)
+    print('Box art downloaded to {}.'.format(FPATH))
     # access_token = get_access_token()
     # print('ACCESS TOKEN:', access_token)
 

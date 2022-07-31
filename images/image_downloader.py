@@ -20,3 +20,7 @@ class ImageDownloader(BoxArtScraper):
         with open(fname, 'wb') as f:
             f.write(image_data)
             f.close()
+
+    def download_box_art_from_query(self, fname: str, query: str):
+        url = self.scrape_box_art(query)
+        self.download_box_art(fname, url)

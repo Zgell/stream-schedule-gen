@@ -20,7 +20,7 @@ The program works by first taking in 3 games from the user (follows the stream s
 - [x] Label the template copy
 - [x] Produce final image
 - [ ] Add a default image for when box art cannot be scraped / "Let's Chat" on Twitch
-- [ ] Fix the template's Saturday/Sunday labels (they're swapped)
+- [x] Fix the template's Saturday/Sunday labels (they're swapped)
 - [ ] Add install and run scripts for easy usage
 - [ ] Update install instructions
 ### Bonus Things I Might Do (from highest to lowest priority)

@@ -6,9 +6,11 @@ in this directory.
 '''
 
 from api.igdb import BoxArtScraper
-from config.defaults import DEFAULT_AUTH_PATH as AUTH_PATH
+from config.defaults import DEFAULT_AUTH_PATH as AUTH_PATH, BOX_ART_RESIZE
 
+import glob
 import os
+from PIL import Image
 import requests
 
 class ImageDownloader(BoxArtScraper):
@@ -17,8 +19,9 @@ class ImageDownloader(BoxArtScraper):
 
     def clear_cached_box_art(self):
         '''Deletes any monday/wednesday/friday pics left over'''
-        FILES = ['images/temp/monday.png', 'images/temp/wednesday.png', 'images/temp/friday.png']
-        for f in FILES:
+        # FILES = ['images/temp/monday.png', 'images/temp/wednesday.png', 'images/temp/friday.png']
+        files = glob.glob('images/temp/*.png')
+        for f in files:
             if os.path.exists(f):
                 os.remove(f)
             else:
@@ -32,5 +35,11 @@ class ImageDownloader(BoxArtScraper):
             f.close()
 
     def download_box_art_from_query(self, fname: str, query: str):
-        url = self.scrape_box_art(query)
-        self.download_box_art(fname, url)
+        try:
+            url = self.scrape_box_art(query)
+            self.download_box_art(fname, url)
+        except IndexError:
+            # This happens when a query turns up nothing, so just use the default image
+            print('WARNING: Nothing found for query "{}", resorting to default image...'.format(query))
+            default = Image.open('templates/no-game.png').resize(BOX_ART_RESIZE)
+            default.save(fname)

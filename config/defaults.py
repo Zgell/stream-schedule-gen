@@ -3,7 +3,7 @@
 A list of random constants used throughout the program.
 '''
 
-DEFAULT_AUTH_PATH = '../config/auth.json'
+DEFAULT_AUTH_PATH = 'config/auth.json'
 
 BOX_ART_RESIZE = (275, 650)
 

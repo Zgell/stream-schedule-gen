@@ -22,17 +22,29 @@ The program works by first taking in 3 games from the user (follows the stream s
 - [x] Add a default image for when box art cannot be scraped / "Let's Chat" on Twitch
 - [x] Fix the template's Saturday/Sunday labels (they're swapped)
 - [x] Add a name conflict resolver (ie. so you can generate more than 1 schedule per day)
-- [ ] Add install and run scripts for easy usage
+- [ ] Bundle project into distributable executable file?
 - [ ] Update install instructions
 ### Bonus Things I Might Do (from highest to lowest priority)
 - [ ] Add an alternate mode that fetches game screenshots instead of box art
 - [ ] Decouple program from IGDB wrapper library (ie. write my own request headers)
 - [ ] Create a UI (Qt?) to allow the user to enter in the games and select any settings????
 
-## How to Use
-To run, create a virtual environment and install the following:
+## How to Install and Use
+1. Install Python version 3.8 or newer.
+2. Clone this repository.
+3. Create a virtual environment using: `python -m venv env`
+4. Open said virtual environment and install the following prerequisites:
 ```
 pip install requests
 pip install igdb-api-v4
 pip install Pillow
 ```
+5. In the Twitch developer console, create a new application. You'll need the **Client ID** as well as the **Client Secret** of the application. This is for accessing the IGDB API.
+6. In `config/auth.json`, write the following:
+```
+{
+    "CLIENT_ID": "paste your client id here",
+    "CLIENT_SECRET": "paste your client secret here"
+}
+```
+7. To run the program, open it through `main.py`.

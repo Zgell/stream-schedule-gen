@@ -56,6 +56,7 @@ if __name__ == '__main__':
     friday_label    = input('Friday:    ')
     print('Generating schedule image...')
     schedule_img = processor.generate_schedule(monday_text=monday_label, wednesday_text=wednesday_label, friday_text=friday_label)
-    schedule_filename = 'output/{}'.format(processor.get_schedule_name())
+    # schedule_filename = 'output/{}'.format(processor.get_schedule_name())
+    schedule_filename = processor.get_schedule_name()
     schedule_img.save(schedule_filename)
     print('Scheduled successfully generated! Image saved to {}'.format(schedule_filename))

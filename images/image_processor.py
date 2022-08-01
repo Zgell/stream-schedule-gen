@@ -7,6 +7,7 @@ from config.defaults import (BOX_ART_RESIZE, MONDAY_POS, WEDNESDAY_POS, FRIDAY_P
 PRIMARY_FONT_SIZE, DATE_FONT_SIZE)
 
 from datetime import datetime
+import glob
 from math import sqrt
 import os
 from PIL import Image, ImageDraw, ImageFont
@@ -16,9 +17,25 @@ class ImageProcessor:
         pass
 
     def get_schedule_name(self) -> str:
-        '''Returns the filename of the schedule (a function of the date)'''
+        '''
+        Returns the filename of the schedule (a function of the date).
+        Also automatically resolves name conflicts if more than one
+        schedule has been generated on a given day.
+        Finally, it attaches the output directory too.
+        '''
+        OUTPUT_DIR = 'output\\'
+        existing_outputs = set(glob.glob(OUTPUT_DIR + '*.png'))
         date_code = datetime.today().strftime('%Y-%m-%d')
-        return date_code + '.png'
+        suffix_int = 0
+        suffix = ''
+        output = OUTPUT_DIR + date_code + suffix + '.png'
+        while output in existing_outputs:
+            # Keep increasing the suffix until a spot is found
+            print('{} already exists...'.format(output))
+            suffix_int += 1
+            suffix = '-{}'.format(suffix_int)
+            output = OUTPUT_DIR + date_code + suffix + '.png'
+        return output
 
     def clean_box_art(self):
         '''Deletes the generated box art images'''
@@ -81,7 +98,7 @@ class ImageProcessor:
         main_text_img = self.draw_spaced_text(title, main_font, spacing_main)  # Generate text
         # Before generating text, see if text is too big. Width shouldn't exceed 586 (650-2*32).
         main_text_size = main_font.getbbox(title)[2:]
-        if main_text_size[0] > 586:
+        if (main_text_size[0] + spacing_main*(len(title)-1)) > 586:
             main_text_img = main_text_img.resize((586, main_text_size[1]))
         main_text_img = main_text_img.rotate(90, expand=True)
         # Do the date text

@@ -3,12 +3,13 @@
 Contains the ImageProcessor class, which takes in all the source material and
 '''
 
-from config.defaults import BOX_ART_RESIZE, MONDAY_POS, WEDNESDAY_POS, FRIDAY_POS
+from config.defaults import (BOX_ART_RESIZE, MONDAY_POS, WEDNESDAY_POS, FRIDAY_POS, 
+PRIMARY_FONT_SIZE, DATE_FONT_SIZE)
 
 from datetime import datetime
 from math import sqrt
 import os
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 class ImageProcessor:
     def __init__(self):
@@ -29,54 +30,6 @@ class ImageProcessor:
             else:
                 raise FileNotFoundError('Box art {} not detected!'.format(img))
 
-    def apply_black_gradient(self, input_im: Image, gradient=1., initial_opacity=1.):
-        """
-        Applies a black gradient to the image, going from left to right.
-
-        Arguments:
-        ---------
-            path_in: string
-                path to image to apply gradient to
-            path_out: string (default 'out.png')
-                path to save result to
-            gradient: float (default 1.)
-                gradient of the gradient; should be non-negative;
-                if gradient = 0., the image is black;
-                if gradient = 1., the gradient smoothly varies over the full width;
-                if gradient > 1., the gradient terminates before the end of the width;
-            initial_opacity: float (default 1.)
-                scales the initial opacity of the gradient (i.e. on the far left of the image);
-                should be between 0. and 1.; values between 0.9-1. give good results
-        """
-        # get image to operate on
-        if input_im.mode != 'RGBA':
-            input_im = input_im.convert('RGBA')
-        width, height = input_im.size
-
-        # create a gradient that
-        # starts at full opacity * initial_value
-        # decrements opacity by gradient * x / width
-        # Size: width x 1
-        max_dimension = int(sqrt(width**2 + height**2))
-        alpha_gradient = Image.new('L', (width, 1), color=0xFF)  # (width, 1)
-        for x in range(width):
-            a = int((initial_opacity * 255.) * (1. - gradient * float(x)/width))
-            if a > 0:
-                alpha_gradient.putpixel((x, 0), a)
-            else:
-                alpha_gradient.putpixel((x, 0), 0)
-            # print '{}, {:.2f}, {}'.format(x, float(x) / width, a)
-        alpha = alpha_gradient.resize((width, height))
-        alpha = alpha.rotate(210)
-
-        # create black image, apply gradient
-        black_im = Image.new('RGBA', (width, height), color=0) # i.e. black
-        black_im.putalpha(alpha)
-
-        # make composite with original image
-        output_im = Image.alpha_composite(input_im, black_im)
-        return output_im
-
     def apply_gradient(self, boxart: Image) -> Image:
         '''Applies a gradient to a box art image.'''
         game_art = boxart.copy()  # There's a weird bug where boxart is modified by the function otherwise
@@ -85,9 +38,40 @@ class ImageProcessor:
         gradient = Image.open('templates/gradient.png').convert('RGBA')
         game_art.paste(gradient, (0, 0), gradient)
         return game_art
+
+    def apply_text(self, boxart: Image, title: str = 'STREAMING', date_text: str = 'SOMEDAY', kerning: int=0) -> Image:
+        '''Adds the title and date text to the image, after getting a gradient'''
+        RELATIVE_TITLE_POS = (201, 32)  #prev: 217
+        RELATIVE_DATE_POS = (156, 32)  # prev: 172
+        # Ensure title/date text are all uppercase
+        title = title.upper()
+        date_text = date_text.upper()
+
+        game_art = boxart.copy()
+        main_font = ImageFont.truetype('fonts/montserrat-bold.ttf', PRIMARY_FONT_SIZE)
+        date_font = ImageFont.truetype('fonts/montserrat-regular.ttf', DATE_FONT_SIZE)
+        main_text_size = main_font.getbbox(title)[2:]  # First two tuple vars are irrelevant
+        date_text_size = date_font.getbbox(date_text)[2:]  # Same as above
+
+        # To rotate text, create an image, rotate it, and paste it on boxart
+        # see here: https://stackoverflow.com/questions/245447/how-do-i-draw-text-at-an-angle-using-pythons-pil
+        # Do the main title text
+        main_text_img = Image.new('L', main_text_size)
+        main_imdraw = ImageDraw.Draw(main_text_img)
+        main_imdraw.text((0, 0), title, font=main_font, fill=255)  # Adds text to main_text_img
+        main_text_img = main_text_img.rotate(90, expand=True)
+        # Do the date text
+        date_text_img = Image.new('L', date_text_size)
+        date_imdraw = ImageDraw.Draw(date_text_img)
+        date_imdraw.text((0, 0), date_text, font=date_font, fill=255)
+        date_text_img = date_text_img.rotate(90, expand=True)
+        # Paste the images onto the main image
+        game_art.paste(main_text_img, RELATIVE_TITLE_POS, main_text_img)
+        game_art.paste(date_text_img, RELATIVE_DATE_POS, date_text_img)
+        return game_art
         
 
-    def generate_schedule(self) -> Image:
+    def generate_schedule(self, monday_text='Streaming', wednesday_text='Streaming', friday_text='Streaming') -> Image:
         '''Generates the schedule image and saves it'''
         # Load schedule template + three box art images
         TEMPLATE_FILENAME = 'templates/schedule.png'
@@ -100,6 +84,11 @@ class ImageProcessor:
         monday = self.apply_gradient(monday)
         wednesday = self.apply_gradient(wednesday)
         friday = self.apply_gradient(friday)
+
+        # Add text to the box arts
+        monday = self.apply_text(monday)
+        wednesday = self.apply_text(wednesday)
+        friday = self.apply_text(friday)
 
         # Superimpose the box arts on the schedule using Image.paste
         # (see here: https://pillow.readthedocs.io/en/stable/reference/Image.html?highlight=paste#PIL.Image.Image.paste)

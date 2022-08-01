@@ -39,6 +39,26 @@ class ImageProcessor:
         game_art.paste(gradient, (0, 0), gradient)
         return game_art
 
+    def draw_kerned_text(self, text: str, font: ImageFont, kerning: int = 0) -> Image:
+        '''Returns a text image object with custom spacing.'''
+        text_width = font.getbbox(text)[2] + (kerning * (len(text) - 1))
+        text_height = font.getbbox(text)[3]
+        text_size = (text_width, text_height)
+
+        img = Image.new('L', text_size)
+        imdraw = ImageDraw.Draw(img)
+        acc = ''  # Accumulator for the text
+        for char in text:
+            if acc == '':
+                current_width = 0
+            else:
+                current_width = font.getbbox(acc)[2] + (kerning * len(acc))
+            imdraw.text((current_width, 0), char, font=font, fill=255)
+            acc += char
+
+        return img
+
+
     def apply_text(self, boxart: Image, title: str = 'STREAMING', date_text: str = 'SOMEDAY', kerning: int=0) -> Image:
         '''Adds the title and date text to the image, after getting a gradient'''
         RELATIVE_TITLE_POS = (201, 32)  #prev: 217
@@ -56,21 +76,26 @@ class ImageProcessor:
         # To rotate text, create an image, rotate it, and paste it on boxart
         # see here: https://stackoverflow.com/questions/245447/how-do-i-draw-text-at-an-angle-using-pythons-pil
         # Do the main title text
+        '''
         main_text_img = Image.new('L', main_text_size)
         main_imdraw = ImageDraw.Draw(main_text_img)
         main_imdraw.text((0, 0), title, font=main_font, fill=255)  # Adds text to main_text_img
+        '''
+        main_text_img = self.draw_kerned_text(title, main_font, 10)
         main_text_img = main_text_img.rotate(90, expand=True)
         # Do the date text
+        ''''
         date_text_img = Image.new('L', date_text_size)
         date_imdraw = ImageDraw.Draw(date_text_img)
         date_imdraw.text((0, 0), date_text, font=date_font, fill=255)
+        '''
+        date_text_img = self.draw_kerned_text(date_text, date_font, 10)
         date_text_img = date_text_img.rotate(90, expand=True)
         # Paste the images onto the main image
         game_art.paste(main_text_img, RELATIVE_TITLE_POS, main_text_img)
         game_art.paste(date_text_img, RELATIVE_DATE_POS, date_text_img)
         return game_art
         
-
     def generate_schedule(self, monday_text='Streaming', wednesday_text='Streaming', friday_text='Streaming') -> Image:
         '''Generates the schedule image and saves it'''
         # Load schedule template + three box art images

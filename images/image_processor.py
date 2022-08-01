@@ -59,7 +59,8 @@ class ImageProcessor:
         return img
 
 
-    def apply_text(self, boxart: Image, title: str = 'STREAMING', date_text: str = 'SOMEDAY', kerning: int=0) -> Image:
+    def apply_text(self, boxart: Image, title: str = 'STREAMING', date_text: str = 'SOMEDAY', 
+                    spacing_main: int = 0, spacing_date: int = 0) -> Image:
         '''Adds the title and date text to the image, after getting a gradient'''
         RELATIVE_TITLE_POS = (201, 32)  #prev: 217
         RELATIVE_DATE_POS = (156, 32)  # prev: 172
@@ -81,7 +82,7 @@ class ImageProcessor:
         main_imdraw = ImageDraw.Draw(main_text_img)
         main_imdraw.text((0, 0), title, font=main_font, fill=255)  # Adds text to main_text_img
         '''
-        main_text_img = self.draw_kerned_text(title, main_font, 10)
+        main_text_img = self.draw_kerned_text(title, main_font, spacing_main)
         main_text_img = main_text_img.rotate(90, expand=True)
         # Do the date text
         ''''
@@ -89,7 +90,7 @@ class ImageProcessor:
         date_imdraw = ImageDraw.Draw(date_text_img)
         date_imdraw.text((0, 0), date_text, font=date_font, fill=255)
         '''
-        date_text_img = self.draw_kerned_text(date_text, date_font, 10)
+        date_text_img = self.draw_kerned_text(date_text, date_font, spacing_date)
         date_text_img = date_text_img.rotate(90, expand=True)
         # Paste the images onto the main image
         game_art.paste(main_text_img, RELATIVE_TITLE_POS, main_text_img)
@@ -111,9 +112,9 @@ class ImageProcessor:
         friday = self.apply_gradient(friday)
 
         # Add text to the box arts
-        monday = self.apply_text(monday)
-        wednesday = self.apply_text(wednesday)
-        friday = self.apply_text(friday)
+        monday = self.apply_text(monday, spacing_main=10, spacing_date=6)
+        wednesday = self.apply_text(wednesday, spacing_main=10, spacing_date=6)
+        friday = self.apply_text(friday, spacing_main=10, spacing_date=6)
 
         # Superimpose the box arts on the schedule using Image.paste
         # (see here: https://pillow.readthedocs.io/en/stable/reference/Image.html?highlight=paste#PIL.Image.Image.paste)

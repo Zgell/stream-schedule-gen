@@ -76,12 +76,8 @@ class ImageProcessor:
 
         # To rotate text, create an image, rotate it, and paste it on boxart
         # see here: https://stackoverflow.com/questions/245447/how-do-i-draw-text-at-an-angle-using-pythons-pil
+
         # Do the main title text
-        '''
-        main_text_img = Image.new('L', main_text_size)
-        main_imdraw = ImageDraw.Draw(main_text_img)
-        main_imdraw.text((0, 0), title, font=main_font, fill=255)  # Adds text to main_text_img
-        '''
         main_text_img = self.draw_spaced_text(title, main_font, spacing_main)  # Generate text
         # Before generating text, see if text is too big. Width shouldn't exceed 586 (650-2*32).
         main_text_size = main_font.getbbox(title)[2:]
@@ -89,11 +85,6 @@ class ImageProcessor:
             main_text_img = main_text_img.resize((586, main_text_size[1]))
         main_text_img = main_text_img.rotate(90, expand=True)
         # Do the date text
-        ''''
-        date_text_img = Image.new('L', date_text_size)
-        date_imdraw = ImageDraw.Draw(date_text_img)
-        date_imdraw.text((0, 0), date_text, font=date_font, fill=255)
-        '''
         date_text_img = self.draw_spaced_text(date_text, date_font, spacing_date)
         # Perform the same size check as above, although this should never fail
         date_text_size = date_font.getbbox(date_text)[2:]
@@ -105,7 +96,9 @@ class ImageProcessor:
         game_art.paste(date_text_img, RELATIVE_DATE_POS, date_text_img)
         return game_art
         
-    def generate_schedule(self, monday_text='Streaming', wednesday_text='Streaming', friday_text='Streaming') -> Image:
+    def generate_schedule(self, monday_text='LIVE ON TWITCH', 
+                        wednesday_text='LIVE ON TWITCH', friday_text='LIVE ON TWITCH') -> Image:
+        
         '''Generates the schedule image and saves it'''
         # Load schedule template + three box art images
         TEMPLATE_FILENAME = 'templates/schedule.png'
@@ -120,9 +113,12 @@ class ImageProcessor:
         friday = self.apply_gradient(friday)
 
         # Add text to the box arts
-        monday = self.apply_text(monday, spacing_main=10, spacing_date=6)
-        wednesday = self.apply_text(wednesday, spacing_main=10, spacing_date=6)
-        friday = self.apply_text(friday, spacing_main=10, spacing_date=6)
+        monday = self.apply_text(monday, title=monday_text, date_text='MONDAY', 
+                                spacing_main=10, spacing_date=6)
+        wednesday = self.apply_text(wednesday, title=wednesday_text, date_text='WEDNESDAY',
+                                spacing_main=10, spacing_date=6)
+        friday = self.apply_text(friday, title=friday_text, date_text='FRIDAY', 
+                                spacing_main=10, spacing_date=6)
 
         # Superimpose the box arts on the schedule using Image.paste
         # (see here: https://pillow.readthedocs.io/en/stable/reference/Image.html?highlight=paste#PIL.Image.Image.paste)
@@ -130,12 +126,6 @@ class ImageProcessor:
         schedule.paste(wednesday, WEDNESDAY_POS)
         schedule.paste(friday, FRIDAY_POS)
 
-        # Add a gradient for the text
-        if schedule.mode != 'RGBA':
-            schedule = schedule.convert('RGBA')
-        # schedule = self.apply_black_gradient(schedule)
-        # Add text?
-
-        # Return a copy of the image object (change this later??? idk)
+        # Return a copy of the image object
         return schedule
 

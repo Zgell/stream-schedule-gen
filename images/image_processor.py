@@ -39,7 +39,7 @@ class ImageProcessor:
         game_art.paste(gradient, (0, 0), gradient)
         return game_art
 
-    def draw_kerned_text(self, text: str, font: ImageFont, kerning: int = 0) -> Image:
+    def draw_spaced_text(self, text: str, font: ImageFont, kerning: int = 0) -> Image:
         '''Returns a text image object with custom spacing.'''
         text_width = font.getbbox(text)[2] + (kerning * (len(text) - 1))
         text_height = font.getbbox(text)[3]
@@ -59,7 +59,7 @@ class ImageProcessor:
         return img
 
 
-    def apply_text(self, boxart: Image, title: str = 'STREAMING', date_text: str = 'SOMEDAY', 
+    def apply_text(self, boxart: Image, title: str = 'LIVE ON TWITCH', date_text: str = 'SOMEDAY', 
                     spacing_main: int = 0, spacing_date: int = 0) -> Image:
         '''Adds the title and date text to the image, after getting a gradient'''
         RELATIVE_TITLE_POS = (201, 32)  #prev: 217
@@ -82,7 +82,11 @@ class ImageProcessor:
         main_imdraw = ImageDraw.Draw(main_text_img)
         main_imdraw.text((0, 0), title, font=main_font, fill=255)  # Adds text to main_text_img
         '''
-        main_text_img = self.draw_kerned_text(title, main_font, spacing_main)
+        main_text_img = self.draw_spaced_text(title, main_font, spacing_main)  # Generate text
+        # Before generating text, see if text is too big. Width shouldn't exceed 586 (650-2*32).
+        main_text_size = main_font.getbbox(title)[2:]
+        if main_text_size[0] > 586:
+            main_text_img = main_text_img.resize((586, main_text_size[1]))
         main_text_img = main_text_img.rotate(90, expand=True)
         # Do the date text
         ''''
@@ -90,7 +94,11 @@ class ImageProcessor:
         date_imdraw = ImageDraw.Draw(date_text_img)
         date_imdraw.text((0, 0), date_text, font=date_font, fill=255)
         '''
-        date_text_img = self.draw_kerned_text(date_text, date_font, spacing_date)
+        date_text_img = self.draw_spaced_text(date_text, date_font, spacing_date)
+        # Perform the same size check as above, although this should never fail
+        date_text_size = date_font.getbbox(date_text)[2:]
+        if date_text_size[0] > 586:
+            date_text_img = date_text_img.resize((586, date_text_size[1]))
         date_text_img = date_text_img.rotate(90, expand=True)
         # Paste the images onto the main image
         game_art.paste(main_text_img, RELATIVE_TITLE_POS, main_text_img)

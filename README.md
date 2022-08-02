@@ -22,7 +22,7 @@ The program works by first taking in 3 games from the user (follows the stream s
 - [x] Add a default image for when box art cannot be scraped / "Let's Chat" on Twitch
 - [x] Fix the template's Saturday/Sunday labels (they're swapped)
 - [x] Add a name conflict resolver (ie. so you can generate more than 1 schedule per day)
-- [ ] Bundle project into distributable executable file?
+- [x] Bundle project into distributable executable file (not included in repo)
 - [ ] Update install instructions
 ### Bonus Things I Might Do (from highest to lowest priority)
 - [ ] Add an alternate mode that fetches game screenshots instead of box art

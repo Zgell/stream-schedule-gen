@@ -60,3 +60,6 @@ if __name__ == '__main__':
     schedule_filename = processor.get_schedule_name()
     schedule_img.save(schedule_filename)
     print('Scheduled successfully generated! Image saved to {}'.format(schedule_filename))
+    print('')
+    print('Press any key to continue...')
+    x = input('')

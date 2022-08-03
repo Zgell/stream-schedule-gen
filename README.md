@@ -30,6 +30,9 @@ The program works by first taking in 3 games from the user (follows the stream s
 - [ ] Create a UI (Qt?) to allow the user to enter in the games and select any settings????
 
 ## How to Install and Use
+If you just want to use the program, download the pre-compiled binary and run the `main.exe` file (Windows only at the moment).
+If you need a cross-platform copy or just want to run the main Python version
+
 1. Install Python version 3.8 or newer.
 2. Clone this repository.
 3. Create a virtual environment using: `python -m venv env`

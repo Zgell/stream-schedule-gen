@@ -16,7 +16,20 @@ class BoxArtScraper:
         self.twitch.fetch_credentials()
         self.twitch.fetch_access_token()
         client_id = self.twitch.get_client_id()
-        access_token = self.twitch.get_access_token()
+        try:
+            access_token = self.twitch.get_access_token()
+        except Exception:
+            print('WARNING: Invalid Twitch Client ID/Secret!')
+            print('Make sure that you have entered the correct credentials in config/auth.json.')
+            print('')
+            print('If no config/auth.json is present, format it like the following:')
+            print('{')
+            print('    "CLIENT_ID": "your client ID here",')
+            print('    "CLIENT_SECRET": "your client secret here",')
+            print('}')
+            print('')
+            print('To get your Twitch credentials, log into the Twitch developer console and create a new application.')
+            exit()
 
         self.igdb_api = IGDBWrapper(client_id, access_token)
 
